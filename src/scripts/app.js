@@ -1,6 +1,12 @@
-import { fetchData } from "./fetchData.js";
-import { renderLoader, renderProductCard } from "./renderProducts.js";
 ("use strict");
+import { fetchData } from "./fetchData.js";
+import {
+  renderLoader,
+  renderProductCard,
+  addToCart,
+  reduceQuantity,
+  removeFromCart,
+} from "./renderProducts.js";
 
 // Define Data
 let allProducts = [];
@@ -12,6 +18,9 @@ const cartModal = document.querySelector(".cart_modal");
 const cartModalOverlay = document.querySelector(".cart_modal_overlay");
 const cartModalCloseButton = document.querySelector(".cart_modal_close_btn");
 const productContainer = document.querySelector("main.product_list");
+const pageHeader = document.querySelector("section.page_header");
+const continueShoppingButton = document.querySelector(".continue_shopping");
+const cartModalContainer = document.querySelector("ul.cart_modal_container");
 
 // Event Listeners
 cartButton.addEventListener("click", () => {
@@ -22,17 +31,50 @@ cartModalCloseButton.addEventListener("click", () => {
   cartModal.classList.add("hidden");
 });
 
+continueShoppingButton.addEventListener("click", () => {
+  cartModal.classList.add("hidden");
+});
+
 cartModalOverlay.addEventListener("click", () => {
   cartModal.classList.add("hidden");
 });
 
 productContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("add_to_cart")) {
-    console.log(e.target.dataset);
-    const product = allProducts.find(
-      (product) => product.id === Number(e.target.dataset.id)
-    );
-    console.log(product);
+    const productId = e.target.dataset.id;
+    addToCart(allProducts, cart, productId);
+  }
+
+  if (
+    e.target.classList.contains("add_button") ||
+    e.target.parentElement.classList.contains("add_button")
+  ) {
+    const productId =
+      e.target.parentElement.parentElement.parentElement.dataset.id ||
+      e.target.parentElement.parentElement.parentElement.parentElement.dataset
+        .id;
+    addToCart(allProducts, cart, productId);
+  }
+
+  if (
+    e.target.classList.contains("remove_button") ||
+    e.target.parentElement.classList.contains("remove_button")
+  ) {
+    const productId =
+      e.target.parentElement.parentElement.parentElement.dataset.id ||
+      e.target.parentElement.parentElement.parentElement.parentElement.dataset
+        .id;
+    console.log(cart);
+    reduceQuantity(cart, productId);
+    console.log(cart);
+  }
+});
+
+cartModalContainer.addEventListener("click", (e) => {
+  console.log(e.target);
+  if (e.target.classList.contains("remove_from_cart")) {
+    const productId = e.target.dataset.id;
+    removeFromCart(cart, productId);
   }
 });
 
@@ -42,7 +84,8 @@ const init = async () => {
   const { products } = data;
   if (products) {
     allProducts = products;
-    productContainer.innerHTML = `  <div class="py-4 col-span-3">
+    productContainer.innerHTML = "";
+    pageHeader.innerHTML = `  <div class="pt-20 pb-5 ">
         <h1 class="text-4xl font-bold text-gray-900 text-center">
           All Products
         </h1>

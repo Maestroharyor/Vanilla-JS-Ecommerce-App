@@ -1,4 +1,7 @@
+// Query DOM Elements
 const productContainer = document.querySelector("main.product_list");
+const cartModalContainer = document.querySelector("ul.cart_modal_container");
+const cartCounter = document.querySelector(".cart_counter");
 
 export const renderLoader = () => {
   for (let i = 0; i < 3; i++) {
@@ -44,35 +47,17 @@ export const renderLoader = () => {
 
 export const renderProductCard = (product) => {
   const productCard = document.createElement("div");
+  productCard.dataset.id = product.id;
   productCard.classList.add(
     "group",
     "relative",
     "block",
     "overflow-hidden",
-    "max-w-[400px]",
+    "sm:max-w-[400px]",
     "rounded"
   );
   productCard.innerHTML = `
-        <button
-          class="absolute right-4 top-4 z-[2] rounded-full bg-white p-1.5 text-gray-900 transition hover:text-gray-900/75 wishlist"
-        >
-          <span class="sr-only">Wishlist</span>
-
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="h-5 w-5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-            />
-          </svg>
-        </button>
+  
 
         <img
           src=${product.thumbnail}
@@ -97,7 +82,7 @@ export const renderProductCard = (product) => {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-4"
+                class="h-6 w-4 pointer-events-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -120,7 +105,7 @@ export const renderProductCard = (product) => {
           >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-4"
+                class="h-6 w-4 pointer-events-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -145,4 +130,144 @@ export const renderProductCard = (product) => {
         </div>`;
 
   productContainer.appendChild(productCard);
+};
+
+// Function to add a product to the cart
+export const addToCart = (allProducts, cart, productId, quantity = 1) => {
+  const product = allProducts.find(
+    (product) => Number(product.id) === Number(productId)
+  );
+
+  // Check if the product is already in the cart
+  const existingCartItem = cart.find(
+    (item) => Number(item.id) === Number(productId)
+  );
+
+  if (existingCartItem !== undefined) {
+    // If the product is in the cart, update its quantity
+    existingCartItem.quantity += quantity;
+  } else {
+    // If the product is not in the cart, add it with the specified quantity
+    cart.push({ ...product, quantity });
+  }
+  // Update the cart count and any other necessary UI
+  updateProductCardCount(cart, productId);
+  updateCartCount(cart);
+  renderCartProducts(cart);
+};
+
+// Function to reduce the quantity of a product in the cart
+export const reduceQuantity = (cart, productId) => {
+  if (cart.length === 0) {
+    alert("Cart is empty");
+    return;
+  }
+  const existingCartItem = cart.find(
+    (item) => Number(item.id) === Number(productId)
+  );
+
+  if (existingCartItem) {
+    // If the product is in the cart with a quantity greater than 1, reduce its quantity by 1
+    if (existingCartItem.quantity > 1) {
+      existingCartItem.quantity -= 1;
+    } else {
+      // If the product's quantity is 1, remove it from the cart
+      removeFromCart(cart, productId);
+    }
+
+    // Update the cart count and any other necessary UI
+    updateProductCardCount(cart, productId);
+    updateCartCount(cart);
+    renderCartProducts(cart);
+  }
+};
+
+// Function to remove an item from the cart completely
+export const removeFromCart = (cart, productId) => {
+  const index = cart.findIndex((item) => Number(item.id) === Number(productId));
+
+  if (index !== -1) {
+    // Remove the item from the cart array
+    cart.splice(index, 1);
+
+    // Update the cart count and any other necessary UI
+    updateProductCardCount(cart, productId);
+    updateCartCount(cart);
+    renderCartProducts(cart);
+  }
+};
+
+const updateProductCardCount = (cart, productId) => {
+  const productCardCount = document.querySelector(
+    `[data-id="${productId}"] .quantity_display`
+  );
+  const cartItem = cart.find((item) => Number(item.id) === Number(productId));
+  productCardCount.innerHTML = cartItem?.quantity || 0;
+};
+
+const updateCartCount = (cart) => {
+  if (cart.length > 0) {
+    cartCounter.classList.remove("hidden");
+    cartCounter.classList.add("flex");
+    cartCounter.innerHTML = cart.length;
+  } else {
+    cartCounter.classList.add("hidden");
+    cartCounter.classList.remove("flex");
+  }
+};
+
+const renderCartProducts = (cart) => {
+  if (cart.length) {
+    document.querySelector(".checkout_button").classList.remove("hidden");
+    cartModalContainer.innerHTML = "";
+    cart.forEach((product) => {
+      const cartProductCard = document.createElement("li");
+      cartProductCard.classList.add("flex", "items-center", "gap-4");
+      cartProductCard.innerHTML = `
+              <img
+                src=${product.thumbnail}
+                alt=""
+                class="h-16 w-16 rounded object-cover"
+              />
+
+              <div>
+                <h3 class="text-sm text-gray-900">${product.title}</h3>
+
+                <dl class="mt-0.5 space-y-px text-[10px] text-gray-600">
+                  <div>
+                    <dt class="inline">Qty:</dt>
+                    <dd class="inline">${product.quantity}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="flex flex-1 items-center justify-end gap-2">
+                <button class="text-gray-600 transition hover:text-red-600 remove_from_cart" data-id=${product.id}>
+                  <span class="sr-only">Remove item</span>
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="h-4 w-4 pointer-events-none"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    />
+                  </svg>
+                </button>
+              </div>
+            `;
+
+      cartModalContainer.appendChild(cartProductCard);
+    });
+  } else {
+    cartModalContainer.innerHTML =
+      " <p>You haven't added any products to cart...</p>";
+    document.querySelector(".checkout_button").classList.add("hidden");
+  }
 };
