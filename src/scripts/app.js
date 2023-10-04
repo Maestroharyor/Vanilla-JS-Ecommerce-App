@@ -11,6 +11,7 @@ import {
 // Define Data
 let allProducts = [];
 let cart = [];
+const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
 // Query DOM Elements
 const cartButton = document.querySelector(".cart_btn");
