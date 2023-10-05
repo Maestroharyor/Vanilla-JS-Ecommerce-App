@@ -197,7 +197,7 @@ export const removeFromCart = (cart, productId) => {
   }
 };
 
-const updateProductCardCount = (cart, productId) => {
+export const updateProductCardCount = (cart, productId) => {
   const productCardCount = document.querySelector(
     `[data-id="${productId}"] .quantity_display`
   );
@@ -205,7 +205,7 @@ const updateProductCardCount = (cart, productId) => {
   productCardCount.innerHTML = cartItem?.quantity || 0;
 };
 
-const updateCartCount = (cart) => {
+export const updateCartCount = (cart) => {
   if (cart.length > 0) {
     cartCounter.classList.remove("hidden");
     cartCounter.classList.add("flex");
@@ -214,9 +214,11 @@ const updateCartCount = (cart) => {
     cartCounter.classList.add("hidden");
     cartCounter.classList.remove("flex");
   }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
 };
 
-const renderCartProducts = (cart) => {
+export const renderCartProducts = (cart) => {
   if (cart.length) {
     document.querySelector(".checkout_button").classList.remove("hidden");
     cartModalContainer.innerHTML = "";
@@ -231,18 +233,24 @@ const renderCartProducts = (cart) => {
               />
 
               <div>
-                <h3 class="text-sm text-gray-900">${product.title}</h3>
+                <h3 class="text-[14px] text-gray-900">${product.title}</h3>
 
-                <dl class="mt-0.5 space-y-px text-[10px] text-gray-600">
+                <dl class="mt-0.5 space-y-px text-[12px] text-gray-600">
                   <div>
                     <dt class="inline">Qty:</dt>
                     <dd class="inline">${product.quantity}</dd>
+                  </div>
+                  <div>
+                    <dt class="inline">Price:</dt>
+                    <dd class="inline">$${product.price * product.quantity}</dd>
                   </div>
                 </dl>
               </div>
 
               <div class="flex flex-1 items-center justify-end gap-2">
-                <button class="text-gray-600 transition hover:text-red-600 remove_from_cart" data-id=${product.id}>
+                <button class="text-gray-600 transition hover:text-red-600 remove_from_cart" data-id=${
+                  product.id
+                }>
                   <span class="sr-only">Remove item</span>
 
                   <svg

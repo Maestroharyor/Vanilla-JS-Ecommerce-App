@@ -50,8 +50,40 @@
     <section class="page_header"></section>
     <!-- Main Body Content -->
     <main
-      class="w-full min-h-screen h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-center justify-center px-5 md:px-10 max-w-[1300px] mx-auto gap-x-5 gap-y-10 pt-10 pb-20 product_list"
-    ></main>
+      class="w-full min-h-screen h-full flex items-center justify-center px-5 md:px-10 max-w-[1300px] mx-auto gap-x-5 gap-y-10 pt-10 pb-20 product_list"
+    >
+      <!-- component -->
+      <div class="bg-gray-100 h-screen min-w-[500px] w-full">
+        <div class="bg-white p-6 md:mx-auto">
+          <svg
+            viewBox="0 0 24 24"
+            class="text-green-600 w-16 h-16 mx-auto my-6"
+          >
+            <path
+              fill="currentColor"
+              d="M12,0A12,12,0,1,0,24,12,12.014,12.014,0,0,0,12,0Zm6.927,8.2-6.845,9.289a1.011,1.011,0,0,1-1.43.188L5.764,13.769a1,1,0,1,1,1.25-1.562l4.076,3.261,6.227-8.451A1,1,0,1,1,18.927,8.2Z"
+            ></path>
+          </svg>
+          <div class="text-center">
+            <h3
+              class="md:text-2xl text-base text-gray-900 font-semibold text-center"
+            >
+              Payment Successful!
+            </h3>
+            <p class="text-gray-600 my-2">Thank you for your order.</p>
+            <p>Have a great day!</p>
+            <div class="py-10 text-center">
+              <a
+                href="/src/index.html"
+                class="w-full rounded bg-yellow-400 py-4 px-8 text-sm font-medium transition hover:scale-105"
+              >
+                CONTINUE SHOPPING
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-gray-50">
@@ -76,64 +108,7 @@
       </div>
     </footer>
 
-    <!-- Cart Modal -->
-    <div class="fixed top-0 left-0 w-full h-full z-10 hidden cart_modal">
-      <!-- Overlay -->
-      <div
-        class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20 cart_modal_overlay"
-      ></div>
-      <div
-        class="absolute w-screen max-w-sm shadow bg-gray-100 px-4 py-8 sm:px-6 lg:px-8 right-0 top-0 h-full"
-        aria-modal="true"
-        role="dialog"
-        tabindex="-1"
-      >
-        <button
-          class="absolute end-4 top-4 text-gray-600 transition hover:scale-110 cart_modal_close_btn"
-        >
-          <span class="sr-only">Close cart</span>
-
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="h-5 w-5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
-        <div class="mt-4 flex flex-col justify-between h-full pb-5">
-          <ul class="space-y-4 cart_modal_container">
-            <p>You haven't added any products to cart...</p>
-          </ul>
-
-          <div class="space-y-4 text-center">
-            <button
-              class="hidden w-full rounded bg-yellow-400 p-4 text-sm font-medium transition hover:scale-105 checkout_button"
-            >
-              Checkout
-            </button>
-
-            <p
-              class="inline-block text-sm text-gray-500 underline underline-offset-4 transition hover:text-gray-600 continue_shopping cursor-pointer"
-            >
-              Continue shopping
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Script files here -->
-    <script type="module" src="scripts/app.js"></script>
-    <script type="module" src="scripts/fetchData.js"></script>
-    <script type="module" src="scripts/renderItems.js"></script>
+    <script src="scripts/success.js"></script>
   </body>
 </html>

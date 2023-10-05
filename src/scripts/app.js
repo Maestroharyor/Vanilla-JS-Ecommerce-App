@@ -1,17 +1,18 @@
 ("use strict");
-import { fetchData } from "./fetchData.js";
+import { fetchData, checkoutUsers } from "./fetchData.js";
 import {
   renderLoader,
   renderProductCard,
   addToCart,
   reduceQuantity,
   removeFromCart,
-} from "./renderProducts.js";
+  renderCartProducts,
+  updateCartCount,
+} from "./renderItems.js";
 
 // Define Data
 let allProducts = [];
 let cart = [];
-const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
 // Query DOM Elements
 const cartButton = document.querySelector(".cart_btn");
@@ -22,6 +23,7 @@ const productContainer = document.querySelector("main.product_list");
 const pageHeader = document.querySelector("section.page_header");
 const continueShoppingButton = document.querySelector(".continue_shopping");
 const cartModalContainer = document.querySelector("ul.cart_modal_container");
+const checkoutButton = document.querySelector(".checkout_button");
 
 // Event Listeners
 cartButton.addEventListener("click", () => {
@@ -38,6 +40,10 @@ continueShoppingButton.addEventListener("click", () => {
 
 cartModalOverlay.addEventListener("click", () => {
   cartModal.classList.add("hidden");
+});
+
+checkoutButton.addEventListener("click", () => {
+  checkoutUsers(cart);
 });
 
 productContainer.addEventListener("click", (e) => {
@@ -65,14 +71,11 @@ productContainer.addEventListener("click", (e) => {
       e.target.parentElement.parentElement.parentElement.dataset.id ||
       e.target.parentElement.parentElement.parentElement.parentElement.dataset
         .id;
-    console.log(cart);
     reduceQuantity(cart, productId);
-    console.log(cart);
   }
 });
 
 cartModalContainer.addEventListener("click", (e) => {
-  console.log(e.target);
   if (e.target.classList.contains("remove_from_cart")) {
     const productId = e.target.dataset.id;
     removeFromCart(cart, productId);
@@ -92,6 +95,13 @@ const init = async () => {
         </h1>
       </div>`;
     allProducts.forEach((product) => renderProductCard(product));
+  }
+
+  const cartfromStorage = JSON.parse(localStorage.getItem("cart"));
+  if (cartfromStorage) {
+    cart = cartfromStorage;
+    renderCartProducts(cart);
+    updateCartCount(cart);
   }
 };
 
