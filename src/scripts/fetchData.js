@@ -14,7 +14,7 @@ export const checkoutUsers = async (cart) => {
   const loader = document.createElement("div");
   try {
     loader.innerHTML = `     <section
-      class="absolute w-full h-full bg-black bg-opacity-90 top-0 left-0 z-20 flex flex-col justify-center items-center text-white gap-5"
+      class="fixed w-full h-full bg-black bg-opacity-90 top-0 left-0 z-20 flex flex-col justify-center items-center text-white gap-5"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
