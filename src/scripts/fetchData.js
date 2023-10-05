@@ -31,7 +31,7 @@ export const checkoutUsers = async (cart) => {
         />
       </svg>
 
-      <p class="text-2xl">Creating your payment page...</p>
+      <p class="text-2xl">Redirecting you to checkout...</p>
     </section> `;
 
     document.body.appendChild(loader);
